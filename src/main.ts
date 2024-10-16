@@ -8,8 +8,13 @@ if (cluster.isPrimary) {
 
   for (let i = 0; i < numCPUs; i++) {
     const worker = cluster.fork();
-
     console.debug(`worker id: ${worker.id}, pid: ${worker.process?.pid}`);
+
+    worker.on("message", (obj) => {
+      console.log(
+        `received message from ${worker.process?.pid}: ${obj?.message}`,
+      );
+    });
 
     worker
       .on("exit", (code, signal) => {
@@ -22,6 +27,8 @@ if (cluster.isPrimary) {
   console.log("hello, world");
 } else {
   console.debug(`sub process, pid: ${process.pid}`);
+
+  process.send?.({ message: `message from pid: ${process.pid}` });
 
   process.kill(process.pid);
 }
