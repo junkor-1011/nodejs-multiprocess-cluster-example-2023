@@ -7,7 +7,14 @@ if (cluster.isPrimary) {
   console.debug(`Primary process, pid: ${process.pid}`);
 
   for (let i = 0; i < numCPUs; i++) {
-    const _worker = cluster.fork();
+    const worker = cluster.fork();
+
+    worker
+      .on("exit", (code, signal) => {
+        console.debug(
+          `subprocess exit: pid=${worker.process?.pid}, code=${code}, signal=${signal}`,
+        );
+      });
   }
 
   console.log("hello, world");
