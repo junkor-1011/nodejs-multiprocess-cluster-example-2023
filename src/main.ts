@@ -5,7 +5,7 @@ import process from "node:process";
 import { Mutex } from "async-mutex";
 import { Option, program } from "commander";
 
-import { range, sleep } from "./utils";
+import { range } from "./utils";
 import { cliOptsSchema } from "./schemas/cli";
 import {
   type JobRequest,
@@ -32,7 +32,7 @@ if (cluster.isPrimary) {
 
   const opts = cliOptsSchema.parse(program.opts());
 
-  const jobs: number[] = range(opts.number);
+  const jobs: number[] = [...range(opts.number)];
 
   for (let i = 0; i < numCPUs; i++) {
     cluster.fork();
